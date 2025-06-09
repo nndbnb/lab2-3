@@ -691,7 +691,7 @@ int main()
 {
     try
     {
-        std::cout << "=== Проверка SegmentedDeque с int ===\n";
+        std::cout << "=== Проверка улучшенного SegmentedDeque ===\n";
 
         SegmentedDeque<int> dq(3); // размер сегмента: 3
 
@@ -753,42 +753,6 @@ int main()
         std::cout << "После оптимизации:\n";
         dq.PrintDebugInfo();
 
-                std::cout << "\n=== Тесты с другими типами данных ===\n";
-        
-        // Тест с double
-        std::cout << "\nТест с double:\n";
-        SegmentedDeque<double> dqDouble(2);
-        dqDouble.AppendInPlace(3.14);
-        dqDouble.AppendInPlace(2.71);
-        dqDouble.PrependInPlace(1.41);
-        std::cout << "Размер: " << dqDouble.GetLength() << ", Первый: " << dqDouble.GetFirst() 
-                  << ", Последний: " << dqDouble.GetLast() << std::endl;
-        
-        // Тест с string
-        std::cout << "\nТест с string:\n";
-        SegmentedDeque<std::string> dqString(2);
-        dqString.AppendInPlace("Hello");
-        dqString.AppendInPlace("World");
-        dqString.PrependInPlace("Hi");
-        std::cout << "Размер: " << dqString.GetLength() << ", Элементы: ";
-        for (int i = 0; i < dqString.GetLength(); ++i) {
-            std::cout << dqString.Get(i) << " ";
-        }
-        std::cout << std::endl;
-        
-        // Тест с char
-        std::cout << "\nТест с char:\n";
-        SegmentedDeque<char> dqChar(3);
-        dqChar.AppendInPlace('A');
-        dqChar.AppendInPlace('B');
-        dqChar.AppendInPlace('C');
-        dqChar.InsertAtInPlace('X', 1);
-        std::cout << "Размер: " << dqChar.GetLength() << ", Элементы: ";
-        for (int i = 0; i < dqChar.GetLength(); ++i) {
-            std::cout << dqChar.Get(i) << " ";
-        }
-        std::cout << std::endl;
-
         std::cout << "\n=== Все тесты завершены успешно ===\n";
     }
     catch (const std::exception &e)
@@ -798,5 +762,4 @@ int main()
     }
 
     return 0;
-
 }

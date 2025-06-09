@@ -33,15 +33,6 @@ class ArraySequence : public MutableSequence<T> {
 public:
     ArraySequence() = default;
     ArraySequence(T *items, int n) : arr(items, n) {}
-    
-    ArraySequence(const ArraySequence &other) : arr(other.arr) {}
-    
-    ArraySequence& operator=(const ArraySequence &other) {
-        if (this != &other) {
-            arr = other.arr;
-        }
-        return *this;
-    }
 
     T GetFirst() const override {
         if (!arr.GetSize()) throw std::out_of_range("Sequence is empty");
@@ -96,14 +87,8 @@ public:
 
     void InsertAtInPlace(T item, int idx) override {
         if (idx < 0 || idx > arr.GetSize()) throw std::out_of_range("Index out of range");
-        
-        int oldSize = arr.GetSize();
-        arr.Resize(oldSize + 1);
-        
-        for (int i = oldSize; i > idx; --i) {
-            arr.Set(i, arr.Get(i - 1));
-        }
-        
+        arr.Append(item);
+        for (int i = arr.GetSize() - 1; i > idx; --i) arr.Set(i, arr.Get(i - 1));
         arr.Set(idx, item);
     }
 
@@ -168,49 +153,20 @@ template <typename T>
 class ImmutableSequence : public Sequence<T> {
 public:
     explicit ImmutableSequence(Sequence<T>* src) : seq(src) {}
-    
     ~ImmutableSequence() { delete seq; }
-    
     ImmutableSequence(const ImmutableSequence &o) {
-        if (o.seq->GetLength() > 0) {
-            seq = o.seq->GetSubsequence(0, o.seq->GetLength() - 1);
-        } else {
-            seq = new ArraySequence<T>();
-        }
-    }
-    
-    ImmutableSequence& operator=(const ImmutableSequence &o) {
-        if (this != &o) {
-            delete seq;
-            if (o.seq->GetLength() > 0) {
-                seq = o.seq->GetSubsequence(0, o.seq->GetLength() - 1);
-            } else {
-                seq = new ArraySequence<T>();
-            }
-        }
-        return *this;
+        seq = o.seq->GetSubsequence(0, o.seq->GetLength() - 1);
     }
 
     T GetFirst() const override { return seq->GetFirst(); }
     T GetLast()  const override { return seq->GetLast(); }
     T Get(int i) const override { return seq->Get(i); }
     int GetLength() const override { return seq->GetLength(); }
-    
-    Sequence<T>* GetSubsequence(int l, int r) const override { 
-        return new ImmutableSequence<T>(seq->GetSubsequence(l, r)); 
-    }
-    Sequence<T>* Append(T item) const override { 
-        return new ImmutableSequence<T>(seq->Append(item)); 
-    }
-    Sequence<T>* Prepend(T item) const override { 
-        return new ImmutableSequence<T>(seq->Prepend(item)); 
-    }
-    Sequence<T>* InsertAt(T item, int idx) const override { 
-        return new ImmutableSequence<T>(seq->InsertAt(item, idx)); 
-    }
-    Sequence<T>* Concat(Sequence<T>* other) const override { 
-        return new ImmutableSequence<T>(seq->Concat(other)); 
-    }
+    Sequence<T>* GetSubsequence(int l, int r) const override { return new ImmutableSequence<T>(seq->GetSubsequence(l, r)); }
+    Sequence<T>* Append(T item) const override { return new ImmutableSequence<T>(seq->Append(item)); }
+    Sequence<T>* Prepend(T item) const override { return new ImmutableSequence<T>(seq->Prepend(item)); }
+    Sequence<T>* InsertAt(T item, int idx) const override { return new ImmutableSequence<T>(seq->InsertAt(item, idx)); }
+    Sequence<T>* Concat(Sequence<T>* other) const override { return new ImmutableSequence<T>(seq->Concat(other)); }
 
 private:
     Sequence<T>* seq;

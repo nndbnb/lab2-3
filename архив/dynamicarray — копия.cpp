@@ -2,6 +2,7 @@
 #include <functional>
 #include <stdexcept>
 
+
 template <typename T>
 class DynamicArray {
 private:
@@ -67,7 +68,7 @@ public:
         data[index] = value;
     }
 
-    void Append(T item) {  
+=    void Append(T item) {
         if (size == capacity) reallocate(capacity ? capacity * 2 : 1);
         data[size++] = item;
     }
